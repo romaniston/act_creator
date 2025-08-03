@@ -1,0 +1,84 @@
+<ActCreatorRoot>:
+    orientation: 'vertical'
+    padding: 10
+    spacing: 10
+
+    GridLayout:
+        cols: 2
+        row_default_height: 40
+        row_force_default: True
+        spacing: 5
+        size_hint_y: None
+        height: self.minimum_height
+
+        Label:
+            text: "Дата"
+        TextInput:
+            text: root.date
+            on_text: root.date = self.text
+
+        Label:
+            text: "Управляющий (ФИО)"
+        TextInput:
+            text: root.manager_name
+            on_text: root.manager_name = self.text
+
+        Label:
+            text: "Управляющий (ФИО в род. пад.)"
+        TextInput:
+            text: root.manager_name_gen
+            on_text: root.manager_name_gen = self.text
+
+        Label:
+            text: "Доверенность"
+        TextInput:
+            text: root.power_of_attorney
+            on_text: root.power_of_attorney = self.text
+
+        Label:
+            text: "Сотрудник (ФИО)"
+        TextInput:
+            text: root.employee_name
+            on_text: root.employee_name = self.text
+
+        Label:
+            text: "Сотрудник (ФИО в род. пад.)"
+        TextInput:
+            text: root.employee_name_gen
+            on_text: root.employee_name_gen = self.text
+
+        Label:
+            text: "Инвентарный номер"
+        TextInput:
+            text: root.inv_num
+            on_text: root.inv_num = self.text
+
+        Label:
+            text: "Состояние ноутбука"
+        TextInput:
+            text: root.laptop_condition
+            on_text: root.laptop_condition = self.text
+
+    Label:
+        text: "Папка для экспорта акта:"
+
+    BoxLayout:
+        size_hint_y: None
+        height: 40
+        spacing: 5
+
+        TextInput:
+            text: root.output_path
+            readonly: True
+
+        Button:
+            text: "Выбрать..."
+            size_hint_x: None
+            width: 120
+            on_press: root.open_folder_chooser()
+
+    Button:
+        text: "Сгенерировать акт"
+        size_hint_y: None
+        height: 50
+        on_press: root.generate()
