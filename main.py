@@ -28,29 +28,14 @@ class ActCreatorRoot(BoxLayout):
     output_path = StringProperty("")
 
     date = StringProperty(datetime.today().strftime('%d.%m.%Y'))
-    manager_name = StringProperty("")
-    manager_name_gen = StringProperty("")
-    power_of_attorney = StringProperty("")
-    employee_name = StringProperty("")
-    employee_name_gen = StringProperty("")
-    inv_num = StringProperty("")
+    manager_name = StringProperty("Иванов Иван Иванович")
+    manager_name_gen = StringProperty("Иванова Ивана Ивановича")
+    power_of_attorney = StringProperty("№1 от 01.01.2000")
+    employee_name = StringProperty("Смирнов Олег Олегович")
+    employee_name_gen = StringProperty("Смирнова Олега Олеговича")
+    inv_num = StringProperty("001")
     laptop_condition = StringProperty("Вышеуказанное оборудование на момент его передачи находится в надлежащем"
-                                      "состоянии, соответствует предъявляемым к нему техническим требованиям.")
-
-    def generate(self):
-        variables = {
-            "var_date": self.date,
-            "var_manager": self.manager_name,
-            "var_manager_gen": self.manager_name_gen,
-            "var_attorney": self.power_of_attorney,
-            "var_employee": self.employee_name,
-            "var_employee_gen": self.employee_name_gen,
-            "var_condition": self.laptop_condition
-        }
-        generate_act_with_system_info(
-            output_path=self.output_path,
-            variables=variables
-        )
+                                      " состоянии, соответствует предъявляемым к нему техническим требованиям.")
 
     def open_folder_chooser(self):
         content = BoxLayout(orientation='vertical', spacing=10)
@@ -70,8 +55,11 @@ class ActCreatorRoot(BoxLayout):
 
     def generate(self):
 
-        sys_info = funcs.get_system_info()
+        sys_info = funcs.SystemInfo.get_all_system_info()
+        print(sys_info)
 
+        date = datetime.now().strftime('%d.%m.%Y')
+        date_readable = funcs.format_date_readable(date)
         manager = self.manager_name
         manager_gen = self.manager_name_gen
         proxy = self.power_of_attorney
@@ -85,16 +73,21 @@ class ActCreatorRoot(BoxLayout):
             print("❌ Указанный путь недействителен.")
             return
 
-        today = datetime.now().strftime('%Y-%m-%d')
-        act_name = f"Акт_{today}_{employee.replace(' ', '_')}.docx"
+        act_name = f"Акт_{date}_{employee.replace(' ', '_')}.docx"
         act_path = os.path.join(export_path, act_name)
 
         shutil.copy('assets/act_template.docx', act_path)
 
         doc = Document(act_path)
 
+        os_ws = sys_info.get('OS')
+        cpu_ws = sys_info.get('CPU')
+        ram_ws = sys_info.get('RAM')
+        ram_type_ws = sys_info.get('RAM_TYPE')
+
         replacements = {
-            '{DATE}': today,
+            '{DATE}': date,
+            '{DATE_READABLE}': date_readable,
             '{MANAGER}': manager,
             '{MANAGER_GEN}': manager_gen,
             '{PROXY}': proxy,
@@ -103,18 +96,17 @@ class ActCreatorRoot(BoxLayout):
             '{CONDITION}': condition,
             '{LAPTOP_MODEL}': sys_info.get('model', ''),
             '{SERIAL}': sys_info.get('serial', ''),
-            '{OS}': sys_info.get('os', ''),
-            '{CPU}': sys_info.get('cpu', ''),
-            '{RAM}': sys_info.get('ram', ''),
-            '{RAM_TYPE}': sys_info.get('ram_type', ''),
-            '{DRIVES}': sys_info.get('drives', ''),
-            '{INV_NUM}': sys_info.get('inv_num', '')
+            '{OS}': os_ws,
+            '{CPU}': cpu_ws,
+            '{RAM}': ram_ws,
+            '{RAM_TYPE}': ram_type_ws,
+            '{DRIVES}': sys_info.get('drives'),
+            '{INV_NUM}': inv_num
         }
 
-        for paragraph in doc.paragraphs:
-            for key, val in replacements.items():
-                if key in paragraph.text:
-                    paragraph.text = paragraph.text.replace(key, str(val))
+        print(replacements)
+
+        funcs.SystemInfo.replace_placeholders(doc, replacements)
 
         doc.save(act_path)
         print(f"✅ Акт успешно сгенерирован: {act_path}")
