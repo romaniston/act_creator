@@ -1,4 +1,5 @@
 import shutil
+import configparser
 from kivy.app import App
 from kivy.config import Config
 from kivy.properties import StringProperty
@@ -7,6 +8,7 @@ from kivy.uix.popup import Popup
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
 from kivy.uix.filechooser import FileChooserListView
+from kivy.uix.label import Label
 from docx import Document
 
 import os
@@ -14,12 +16,21 @@ from datetime import datetime
 
 import funcs
 
+config = configparser.ConfigParser()
+config.read('assets\config.ini', encoding='utf-8')
+manager_name = config['data']['manager_name']
+manager_name_gen = config['data']['manager_name_gen']
+power_of_attorney = config['data']['power_of_attorney']
+employee_name = config['data']['employee_name']
+employee_name_gen = config['data']['employee_name_gen']
+inv_num = config['data']['inv_num']
+laptop_condition = config['data']['laptop_condition']
 
 Builder.load_file("actcreator.kv")
 
 # resolution
 Config.set('graphics', 'width', '800')
-Config.set('graphics', 'height', '495')
+Config.set('graphics', 'height', '650')
 Config.set('graphics', 'resizable', False)
 
 
@@ -36,6 +47,18 @@ class ActCreatorRoot(BoxLayout):
     inv_num = StringProperty("001")
     laptop_condition = StringProperty("Вышеуказанное оборудование на момент его передачи находится в надлежащем"
                                       " состоянии, соответствует предъявляемым к нему техническим требованиям.")
+
+    def show_popup(self, title, message):
+        layout = BoxLayout(orientation='vertical', padding=10, spacing=10)
+        label = Label(text=message)
+        btn_ok = Button(text='OK', size_hint_y=None, height=40)
+
+        layout.add_widget(label)
+        layout.add_widget(btn_ok)
+
+        popup = Popup(title=title, content=layout, size_hint=(0.5, 0.3), auto_dismiss=False)
+        btn_ok.bind(on_press=popup.dismiss)
+        popup.open()
 
     def open_folder_chooser(self):
         content = BoxLayout(orientation='vertical', spacing=10)
@@ -69,12 +92,19 @@ class ActCreatorRoot(BoxLayout):
         export_path = self.output_path
         inv_num = self.inv_num
 
-        if not os.path.isdir(export_path):
-            print("❌ Указанный путь недействителен.")
-            return
-
         act_name = f"Акт_{date}_{employee.replace(' ', '_')}.docx"
         act_path = os.path.join(export_path, act_name)
+
+        if not os.path.isdir(export_path):
+            self.show_popup("Ошибка", "Невозможно сохранить здесь")
+            return
+
+        try:
+            shutil.copy('assets/act_template.docx', act_path)
+        except Exception as e:
+            print("Ошибка копирования:", e)
+            self.show_popup("Ошибка", "Невозможно сохранить здесь")
+            return
 
         shutil.copy('assets/act_template.docx', act_path)
 
@@ -109,6 +139,7 @@ class ActCreatorRoot(BoxLayout):
         funcs.SystemInfo.replace_placeholders(doc, replacements)
 
         doc.save(act_path)
+        self.show_popup("Успех", "Акт сгенерирован")
         print(f"✅ Акт успешно сгенерирован: {act_path}")
 
 
