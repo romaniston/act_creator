@@ -25,7 +25,7 @@ Config.set('graphics', 'resizable', False)
 
 class ActCreatorRoot(BoxLayout):
 
-    output_path = StringProperty("")
+    output_path = StringProperty(os.getcwd())
 
     date = StringProperty(datetime.today().strftime('%d.%m.%Y'))
     manager_name = StringProperty("Иванов Иван Иванович")
@@ -39,7 +39,7 @@ class ActCreatorRoot(BoxLayout):
 
     def open_folder_chooser(self):
         content = BoxLayout(orientation='vertical', spacing=10)
-        chooser = FileChooserListView(path=".", filters=['*/'], dirselect=True)
+        chooser = FileChooserListView(path=self.output_path, filters=['*/'], dirselect=True)
         btn_select = Button(text="Выбрать", size_hint_y=None, height=40)
         popup = Popup(title="Выбор папки", content=content, size_hint=(0.9, 0.9))
 

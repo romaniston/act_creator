@@ -69,7 +69,7 @@
 
         TextInput:
             text: root.output_path
-            readonly: True
+            on_text: root.output_path = self.text
 
         Button:
             text: "Выбрать..."
@@ -82,3 +82,4 @@
         size_hint_y: None
         height: 50
         on_press: root.generate()
+

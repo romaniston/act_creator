@@ -80,7 +80,6 @@ class SystemInfo():
         for mem in c.Win32_PhysicalMemory():
             size_gb = int(getattr(mem, 'Capacity', 0)) // (1024 ** 3)
 
-            # Получаем тип памяти
             smbios_type = getattr(mem, 'SMBIOSMemoryType', 0)
             mem_type = MEMORY_TYPE_MAP.get(smbios_type, "Unknown")
 
@@ -88,7 +87,6 @@ class SystemInfo():
                 fallback_type = getattr(mem, 'MemoryType', 0)
                 mem_type = MEMORY_TYPE_MAP.get(fallback_type, "Unknown")
 
-            # Получаем форм-фактор
             form_factor_code = getattr(mem, 'FormFactor', 0)
             form_factor = FORM_FACTOR_MAP.get(form_factor_code, "Unknown")
 
@@ -98,7 +96,6 @@ class SystemInfo():
 
     def get_serial_number():
         try:
-            # Сначала пробуем через WMI (BIOS)
             c = wmi.WMI()
             bios_info = c.Win32_BIOS()[0]
             serial_number = bios_info.SerialNumber.strip()
@@ -106,7 +103,6 @@ class SystemInfo():
             if serial_number and serial_number.lower() != "to be filled by o.e.m.":
                 return serial_number
 
-            # Если WMI не дал нормальный результат — пробуем через WMIC (устаревший, но работает)
             result = subprocess.check_output(
                 ['wmic', 'csproduct', 'get', 'identifyingnumber'],
                 shell=True,
