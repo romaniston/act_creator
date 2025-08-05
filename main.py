@@ -21,7 +21,7 @@ Builder.load_file("actcreator.kv")
 
 # resolution
 Config.set('graphics', 'width', '800')
-Config.set('graphics', 'height', '650')
+Config.set('graphics', 'height', '785')
 Config.set('graphics', 'resizable', False)
 
 
@@ -31,9 +31,11 @@ class ActCreatorRoot(BoxLayout):
     config.read('assets\config.ini', encoding='utf-8')
     manager_name = config['data']['manager_name']
     manager_name_gen = config['data']['manager_name_gen']
+    manager_gender = StringProperty("male")
     power_of_attorney = config['data']['power_of_attorney']
     employee_name = config['data']['employee_name']
     employee_name_gen = config['data']['employee_name_gen']
+    employee_gender = StringProperty("male")
     inv_num = config['data']['inv_num']
     laptop_condition = config['data']['laptop_condition']
 
@@ -108,14 +110,26 @@ class ActCreatorRoot(BoxLayout):
         ram_ws = sys_info.get('RAM')
         ram_type_ws = sys_info.get('RAM_TYPE')
 
+        if self.manager_gender == "male":
+            manager_word = "действующего"
+        else:
+            manager_word = "действующей"
+
+        if self.employee_gender == "male":
+            employee_word = "именуемый"
+        else:
+            employee_word = "именуемая"
+
         replacements = {
             '{DATE}': date,
             '{DATE_READABLE}': date_readable,
             '{MANAGER}': manager,
             '{MANAGER_GEN}': manager_gen,
+            '{MANAGER_WORD}': manager_word,
             '{PROXY}': proxy,
             '{EMPLOYEE}': employee,
             '{EMPLOYEE_GEN}': employee_gen,
+            '{EMPLOYEE_WORD}': employee_word,
             '{CONDITION}': condition,
             '{LAPTOP_MODEL}': sys_info.get('model', ''),
             '{SERIAL}': sys_info.get('serial', ''),

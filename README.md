@@ -3,5 +3,5 @@ Kivy GUI-приложение для автоматического состав
 ________________________________
 Screenshots:
 <br>
-<p><img src="screenshots/screen_1.png"></img>
-<p><img src="screenshots/screen_2.png"></img>
+<p><img src="assets/screen_1.png"></img>
+<p><img src="assets/screen_2.png"></img>

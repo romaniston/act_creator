@@ -30,6 +30,23 @@
             on_text: root.manager_name_gen = self.text
 
         Label:
+            text: "Пол управляющего"
+        BoxLayout:
+            size_hint_y: None
+            height: 40
+            spacing: 10
+            ToggleButton:
+                text: "Мужской"
+                group: "manager_gender"
+                on_press: root.manager_gender = "male"
+                state: "down" if root.manager_gender == "male" else "normal"
+            ToggleButton:
+                text: "Женский"
+                group: "manager_gender"
+                on_press: root.manager_gender = "female"
+                state: "down" if root.manager_gender == "female" else "normal"
+
+        Label:
             text: "Доверенность"
         TextInput:
             text: root.power_of_attorney
@@ -46,6 +63,23 @@
         TextInput:
             text: root.employee_name_gen
             on_text: root.employee_name_gen = self.text
+
+        Label:
+            text: "Пол работника"
+        BoxLayout:
+            size_hint_y: None
+            height: 40
+            spacing: 10
+            ToggleButton:
+                text: "Мужской"
+                group: "employee_gender"
+                on_press: root.employee_gender = "male"
+                state: "down" if root.employee_gender == "male" else "normal"
+            ToggleButton:
+                text: "Женский"
+                group: "employee_gender"
+                on_press: root.employee_gender = "female"
+                state: "down" if root.employee_gender == "female" else "normal"
 
         Label:
             text: "Инвентарный номер"
