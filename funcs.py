@@ -5,6 +5,7 @@ from docx import Document
 import winreg
 import cpuinfo
 import subprocess
+import shlex
 
 import os
 
@@ -46,15 +47,13 @@ class SystemInfo():
         return f"{edition} ({os_version})"
 
     def get_cpu_info():
-        info = cpuinfo.get_cpu_info()
-
-        name = info.get("brand_raw", "Unknown CPU")
+        c = wmi.WMI()
+        cpu_info = c.Win32_Processor()[0]
+        name = cpu_info.Name.strip()
         freq = psutil.cpu_freq()
         physical_cores = psutil.cpu_count(logical=False)
         logical_cores = psutil.cpu_count(logical=True)
-
         base_freq = f"{freq.max:.2f} MHz" if freq and freq.max else "Unknown"
-
         return f"{name} ({physical_cores} ядер / {logical_cores} потоков, до {base_freq})"
 
     def get_ram_modules_info():
@@ -103,11 +102,9 @@ class SystemInfo():
             if serial_number and serial_number.lower() != "to be filled by o.e.m.":
                 return serial_number
 
-            result = subprocess.check_output(
-                ['wmic', 'csproduct', 'get', 'identifyingnumber'],
-                shell=True,
-                text=True
-            ).splitlines()
+            import shlex
+            cmd = shlex.split('wmic csproduct get identifyingnumber')
+            result = subprocess.check_output(cmd, text=True).splitlines()
 
             if len(result) >= 2:
                 serial_candidate = result[1].strip()

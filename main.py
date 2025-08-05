@@ -16,15 +16,6 @@ from datetime import datetime
 
 import funcs
 
-config = configparser.ConfigParser()
-config.read('assets\config.ini', encoding='utf-8')
-manager_name = config['data']['manager_name']
-manager_name_gen = config['data']['manager_name_gen']
-power_of_attorney = config['data']['power_of_attorney']
-employee_name = config['data']['employee_name']
-employee_name_gen = config['data']['employee_name_gen']
-inv_num = config['data']['inv_num']
-laptop_condition = config['data']['laptop_condition']
 
 Builder.load_file("actcreator.kv")
 
@@ -36,17 +27,19 @@ Config.set('graphics', 'resizable', False)
 
 class ActCreatorRoot(BoxLayout):
 
+    config = configparser.ConfigParser()
+    config.read('assets\config.ini', encoding='utf-8')
+    manager_name = config['data']['manager_name']
+    manager_name_gen = config['data']['manager_name_gen']
+    power_of_attorney = config['data']['power_of_attorney']
+    employee_name = config['data']['employee_name']
+    employee_name_gen = config['data']['employee_name_gen']
+    inv_num = config['data']['inv_num']
+    laptop_condition = config['data']['laptop_condition']
+
     output_path = StringProperty(os.getcwd())
 
     date = StringProperty(datetime.today().strftime('%d.%m.%Y'))
-    manager_name = StringProperty("Иванов Иван Иванович")
-    manager_name_gen = StringProperty("Иванова Ивана Ивановича")
-    power_of_attorney = StringProperty("№1 от 01.01.2000")
-    employee_name = StringProperty("Смирнов Олег Олегович")
-    employee_name_gen = StringProperty("Смирнова Олега Олеговича")
-    inv_num = StringProperty("001")
-    laptop_condition = StringProperty("Вышеуказанное оборудование на момент его передачи находится в надлежащем"
-                                      " состоянии, соответствует предъявляемым к нему техническим требованиям.")
 
     def show_popup(self, title, message):
         layout = BoxLayout(orientation='vertical', padding=10, spacing=10)
@@ -146,7 +139,6 @@ class ActCreatorRoot(BoxLayout):
 class ActCreatorApp(App):
     def build(self):
         return ActCreatorRoot()
-
 
 if __name__ == '__main__':
     ActCreatorApp().run()
