@@ -21,7 +21,7 @@ Builder.load_file("actcreator.kv")
 
 # resolution
 Config.set('graphics', 'width', '800')
-Config.set('graphics', 'height', '785')
+Config.set('graphics', 'height', '525')
 Config.set('graphics', 'resizable', False)
 
 
@@ -29,10 +29,6 @@ class ActCreatorRoot(BoxLayout):
 
     config = configparser.ConfigParser()
     config.read('assets\config.ini', encoding='utf-8')
-    manager_name = config['data']['manager_name']
-    manager_name_gen = config['data']['manager_name_gen']
-    manager_gender = StringProperty("male")
-    power_of_attorney = config['data']['power_of_attorney']
     employee_name = config['data']['employee_name']
     employee_name_gen = config['data']['employee_name_gen']
     employee_gender = StringProperty("male")
@@ -78,9 +74,6 @@ class ActCreatorRoot(BoxLayout):
 
         date = datetime.now().strftime('%d.%m.%Y')
         date_readable = funcs.format_date_readable(date)
-        manager = self.manager_name
-        manager_gen = self.manager_name_gen
-        proxy = self.power_of_attorney
         employee = self.employee_name
         employee_gen = self.employee_name_gen
         condition = self.laptop_condition
@@ -105,39 +98,36 @@ class ActCreatorRoot(BoxLayout):
 
         doc = Document(act_path)
 
-        os_ws = sys_info.get('OS')
-        cpu_ws = sys_info.get('CPU')
-        ram_ws = sys_info.get('RAM')
-        ram_type_ws = sys_info.get('RAM_TYPE')
-
-        if self.manager_gender == "male":
-            manager_word = "действующего"
-        else:
-            manager_word = "действующей"
+        os_ws = sys_info.get('OS'),
+        cpu_ws = sys_info.get('CPU'),
+        ram_ws = sys_info.get('RAM'),
+        ram_type_ws = sys_info.get('RAM_TYPE'),
+        model = sys_info.get('model', ''),
+        serial = sys_info.get('serial', ''),
+        drives = sys_info.get('drives'),
 
         if self.employee_gender == "male":
             employee_word = "именуемый"
         else:
             employee_word = "именуемая"
 
+        print(ram_type_ws)
+        print(sys_info)
+
         replacements = {
             '{DATE}': date,
             '{DATE_READABLE}': date_readable,
-            '{MANAGER}': manager,
-            '{MANAGER_GEN}': manager_gen,
-            '{MANAGER_WORD}': manager_word,
-            '{PROXY}': proxy,
             '{EMPLOYEE}': employee,
             '{EMPLOYEE_GEN}': employee_gen,
             '{EMPLOYEE_WORD}': employee_word,
             '{CONDITION}': condition,
-            '{LAPTOP_MODEL}': sys_info.get('model', ''),
-            '{SERIAL}': sys_info.get('serial', ''),
-            '{OS}': os_ws,
-            '{CPU}': cpu_ws,
-            '{RAM}': ram_ws,
-            '{RAM_TYPE}': ram_type_ws,
-            '{DRIVES}': sys_info.get('drives'),
+            '{LAPTOP_MODEL}': model[0],
+            '{SERIAL}': serial[0],
+            '{OS}': os_ws[0],
+            '{CPU}': cpu_ws[0],
+            '{RAM}': ram_ws[0],
+            '{RAM_TYPE}': ram_type_ws[0],
+            '{DRIVES}': drives[0],
             '{INV_NUM}': inv_num
         }
 
