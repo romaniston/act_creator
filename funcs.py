@@ -1,13 +1,8 @@
 import wmi
 import platform
 import psutil
-from docx import Document
 import winreg
-import cpuinfo
 import subprocess
-import shlex
-
-import os
 
 from datetime import datetime
 
@@ -27,7 +22,6 @@ def format_date_readable(date):
     return f'{day} {month} {year} г.'
 
 class SystemInfo():
-
     def get_os_info():
         os_name = platform.system()
         os_version = platform.release()
